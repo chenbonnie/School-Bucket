@@ -1,4 +1,17 @@
 p {
   color: blue;
   text-align: center;
-} 
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  font: bold 30px Helvetica, Sans-Serif;
+}
+
+header {
+  color: black;
+  text-align: center;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  font: bold 70px Helvetica, Sans-Serif;
+}
