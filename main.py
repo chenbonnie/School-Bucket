@@ -1,4 +1,79 @@
+import datetime
 
+
+#---------------------------------CLASSES--------------------------------------
+'''N.B. These have not been used anywhere in the functions, but were developed 
+   separately to be used for the organzization of the information scraped by
+   the below functions.'''
+
+
+class zoomLink:
+    
+    # members:
+    # classLink ------ string/dict (if plural=True); link to zoom room
+    # classID -------- string; name of class, e.g. MATH 304
+    # section -------- int; section number, e.g. 512
+    # plural --------- bool; if true, multiple class links (by date)
+    # N.B. members ("attributes") are declared implicitly in methods
+    
+    # methods:
+    def __init__(self, classLink, classID, section, plural): # N.B. __init__ has two underscores on each side :P
+        self.classID = classID
+        self.section = section
+        self.plural = plural            # if plural=True...
+        self.classLink = classLink      # ...classLink is a dict.
+    
+    def printClassLink(self):
+        '''Prints class name/section and zoom link, returns (string) zoom link.'''
+        if not self.plural:     # same room all semester
+            print(f"{self.classID}-{self.section} class link:")
+            print(self.classLink)
+            return self.classLink
+        else:                   # custom rooms each class; keys = datetimes, values = links
+            today = datetime.datetime.today()
+            print(today)
+            for key in self.classLink.keys():
+                print(key)
+                if key >= today:                # will print and return the next session's link
+                    print(self.classLink[key])
+                    return self.classLink[key]
+                else:
+                    continue
+            print(f"There are no more {self.classID}-{self.section} class links this semester.")
+            return
+
+
+class zoomSchedule:
+    
+    # members:
+    # listOfLinks ----- array of zoomLink objects
+    
+    # methods:
+    def __init__(self, listOfLinks):
+        self.listOfLinks = listOfLinks
+    
+    # pop-up for next class of the day ***Could be added to Navigate app***
+    def findClassLink(self, classToFind):   # N.B. section not required; included above for user's info
+        '''Finds specified class and prints its zoom link, returns (string) specified zoom link or error string.'''
+        for i in self.listOfLinks:
+            if i.classID == classToFind:
+                i.printClassLink()
+                return i.classLink
+        return "Class not found"        # returns error message if class does not exist
+    
+    # add a button for this
+    # TODO: manual inputs? link to a form?
+    def addClass(self, newClass):
+        '''Add new zoomLink object to end of listOfLinks, return void.'''
+        self.listOfLinks.append(newClass)
+        
+    def printSchedule(self, filename):
+        '''Prints whole schedule of zoom links to given files name, returns void.'''
+        with open(filename, 'w') as file:
+            file.write("hello")
+        
+        
+#--------------------------------FUNCTIONS-------------------------------------
 
 def findStringReturnIndex(giantCharVector, myString):
     '''Find string in a larger string (syllabus), returns first letter index in larger string.'''
@@ -24,9 +99,12 @@ def potentialTimeAtThisIndex(giantCharVector):
 
     listOfIndexesPotentialTimes = []
 
-    for i in range(len(giantCharVector)):
-        if (ord(giantCharVector[i]) >= 48 and ord(giantCharVector[i]) <= 57 and giantCharVector[i + 1] == ':' and ord(giantCharVector[i + 2]) >= 48 and ord(giantCharVector[i + 2]) <= 57):
-            listOfIndexesPotentialTimes.append(i + 1)       # add index of colon to list
+    for i in range(1, len(giantCharVector) - 2):
+        if ((ord(giantCharVector[i-1]) >= 48 and ord(giantCharVector[i-1]) <= 57)
+            and giantCharVector[i] == ':' 
+            and (ord(giantCharVector[i + 1]) >= 48 and ord(giantCharVector[i + 1]) <= 57)
+            and (ord(giantCharVector[i + 2]) >= 48 and ord(giantCharVector[i + 2]) <= 57)):
+            listOfIndexesPotentialTimes.append(i)       # add index of colon to list
 
     return listOfIndexesPotentialTimes
 
@@ -90,7 +168,7 @@ def returnZoomLink(giantCharVector, origIndex):
     tempString += giantCharVector[origIndex:index]
 	
 
-    if index != 0:
+    if index != 0 and len(tempString) > 12:
         return tempString
     else:
         return "probably not a zoom link in this syllabus."
@@ -196,19 +274,15 @@ def main():
 #    print("\n")
     
     print("zoom link: ", returnZoomLink(giantCharVector, returnIndexOfFirstDot(giantCharVector)))
-    print("\n")
-    print("\n")
 
 
+    # N.B. This is another feature which is not fully implemented
     timeIndexes = potentialTimeAtThisIndex(giantCharVector)
 
-
     for i in range(len(timeIndexes)):
-        if giantCharVector[timeIndexes[i] - 3] != '-':
-            print(giantCharVector[i-2:i+3])
-#            j = -2 in j < 3 :                       # FIXME: make this readable, lol
-#            giantCharVector.at(timeIndexes.at(i) + j)
-#            print("\n")
+        print(giantCharVector[timeIndexes[i]-2:timeIndexes[i]+3])
+
+
 
     return 0
 
