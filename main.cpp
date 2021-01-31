@@ -15,6 +15,7 @@ using std::endl;
 using std::cin;
 using std::cout;
 using std::vector;
+using std::to_string;
 
 
 // TODO: clean up hour:minute
@@ -50,7 +51,7 @@ vector<unsigned int> potentialDayAtThisIndex(vector<char> giantCharVector) {
 
 	vector<unsigned int> listOfIndexesPotentialDays;
 
-	// FIXME(this MWF stuff)
+	// FIXME(this MWF stuff), connect to text files lists
 	for (unsigned int i = 0; i < giantCharVector.size(); i++){
 		if ( (giantCharVector[i] == 'M') &&
 		     (giantCharVector[i + 1] == 'W') &&
@@ -75,8 +76,6 @@ vector<unsigned int> potentialDayAtThisIndex(vector<char> giantCharVector) {
 
 	return listOfIndexesPotentialDays;
 
-
-
 }
 
 
@@ -85,6 +84,7 @@ vector<unsigned int> potentialDayAtThisIndex(vector<char> giantCharVector) {
 
 
 // TODO: have this return a vector or string with zoom link
+// actually this now returns the index of the first dot
 unsigned int numOfZoomLinks(vector<char> giantCharVector) {
 
 	unsigned int z = 0;
@@ -97,13 +97,82 @@ unsigned int numOfZoomLinks(vector<char> giantCharVector) {
 		    giantCharVector.at(i + 3) == 'o' &&
 		    giantCharVector.at(i + 4) == 'm' &&
 		    giantCharVector.at(i + 5) == '.' ) {
-		       z++;	
+//		       z++;	
+			z = i;
 		}
 	
 	}
 
 	return z;
 }
+
+// TODO: have this return a vector or string with zoom link
+// the 'i' is the index of giantCharVector that the first dot is
+string returnZoomLink(vector<char> giantCharVector, unsigned int i) {
+
+	//https://brandeis.zoom.us/j/91324843664
+	// to the left, look for a space, a '\', a ''', a '?', basically anything
+	// that isn't letters, the colon, dots, or forwardslashes.
+	// to the right, look for a space
+	string zoomLink; 
+	
+	char cursor;
+	int index;
+	string tempString;
+
+	index = i;
+//	cout << "index: " << index << endl;
+	cursor = giantCharVector.at(index);
+
+
+	while(cursor != ' ' && cursor != '=' && cursor != '(' && index > 0) {
+		// add the parts that go to the left
+
+		index--;
+
+		cursor = giantCharVector.at(index);
+
+//		cout << "cursor: " << cursor << endl;
+
+		string tempString(1, cursor);		
+
+		tempString = tempString + zoomLink;
+//		cout << "tempString: " << tempString;
+
+		// need to make cursor a string TODO
+		zoomLink = tempString;
+
+	}
+
+	index = i;
+	cursor = giantCharVector.at(index);
+
+	//theoretically, i is:
+	//
+	// .  z  o  o  m  .
+	// ^ here
+	
+	while (cursor != ' ' && index  < giantCharVector.size() - 2) {
+		index++;
+
+		cursor = giantCharVector.at(index);
+
+//		tempString = to_string(cursor);
+		string tempString(1, cursor);
+
+		// need to make cursor a string TODO
+//		strcat(tempString, zoomLink);
+		tempString = zoomLink + tempString;
+
+		zoomLink = tempString;
+
+	}
+
+
+
+	return zoomLink;
+}
+
 
 
 
@@ -119,9 +188,9 @@ int main() {
 		allMonthStrings.push_back(temp);
 	}
 
-	for (unsigned int i = 0; i < allMonthStrings.size(); ++i) {
-		cout << allMonthStrings.at(i) << endl;
-	}
+//	for (unsigned int i = 0; i < allMonthStrings.size(); ++i) {
+//		cout << allMonthStrings.at(i) << endl;
+//	}
 	fs.close();
 
 
@@ -134,9 +203,9 @@ int main() {
 		notNamesStrings.push_back(temp);
 	}
 
-	for (unsigned int i = 0; i < notNamesStrings.size(); ++i) {
-		cout << notNamesStrings.at(i) << endl;
-	}
+//	for (unsigned int i = 0; i < notNamesStrings.size(); ++i) {
+//		cout << notNamesStrings.at(i) << endl;
+//	}
 	fs.close();
 
 
@@ -149,9 +218,9 @@ int main() {
 		titlesOfProf.push_back(temp);
 	}
 
-	for (unsigned int i = 0; i < titlesOfProf.size(); ++i) {
-		cout << titlesOfProf.at(i) << endl;
-	}
+//	for (unsigned int i = 0; i < titlesOfProf.size(); ++i) {
+//		cout << titlesOfProf.at(i) << endl;
+//	}
 	fs.close();
 
 
@@ -182,7 +251,7 @@ int main() {
 		getline(FS, tempString);
 		for (unsigned int i = 0; i < tempString.length(); ++i) {
 			tempChar = tempString.at(i);
-			cout << tempChar;
+//			cout << tempChar;
 			giantCharVector.push_back(tempChar);
 		}
 
@@ -231,11 +300,16 @@ int main() {
 
 //	cout << "numOfMonths: " << numOfMonths(allMonthStrings, giantCharVector);
 
-	cout << "numZoomLinks: " << numOfZoomLinks(giantCharVector) << endl;
+	cout << "index of a zoom link: " << numOfZoomLinks(giantCharVector) << endl;
+
+	cout << "zoom link:" << returnZoomLink(giantCharVector, 
+					numOfZoomLinks(giantCharVector));
+	cout << endl;
+
 
 
 	cout << endl;
-	cout << "The most important thing I can do is get MWF xx:yy to aa::bb times";
+//	cout << "The most important thing I can do is get MWF xx:yy to aa::bb times";
 
 
 	vector<unsigned int> timeIndexes;
@@ -243,14 +317,22 @@ int main() {
 
 	cout << "special colons at: ";
 	for (unsigned int i = 0; i < timeIndexes.size(); i++) {
-		cout << timeIndexes.at(i) << "   ";
+//		cout << timeIndexes.at(i) << "   ";
 	}
 	cout << endl;
 
 	for (unsigned int j = 0; j < timeIndexes.size(); j++) {
 
 		for (unsigned int i = timeIndexes.at(j) - 2; i < timeIndexes.at(j) + 3; i++) {
-			cout << giantCharVector.at(i);
+		
+		  
+			// really screws things up
+		    //  	if (giantCharVector.at(i) >= 48 && giantCharVector[i] <= 57) {
+		
+		    	cout << giantCharVector.at(i);
+		    
+		  //  }
+		
 		}
 		cout << "    ";
 
