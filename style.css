@@ -1,0 +1,36 @@
+body {
+    font-family: sans-serif;
+}
+  
+h1 {
+    color: navy;
+    margin-left: 20px;
+}
+
+.header {
+    padding: 10px;
+    background-color:#27ae60;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    text-align: center;
+
+}
+
+.wrapper {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.column-title {
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.row-icon {
+    align-content: right;
+}
+
+.grid-child {
+    padding-bottom: 50px;
+}
