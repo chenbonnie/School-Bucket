@@ -4,15 +4,15 @@ body {
 
 .header {
     padding: 10px;
-    background-color:#27ae60;
-    color: rgb(255, 255, 255);
-    font-size: 20px;
+    background-color:#06069B;
+    color: rgb(22, 22, 30);
+    font-size: 50px;
     text-align: center;
 
 }
 
 .wrapper {
-    padding: 30px;
+    padding: 40px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
